@@ -13,7 +13,7 @@
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr filter mutate select
 #' @importFrom tidyr gather spread
-#' @author RMH Aug 2017
+#' @author CWR Dec 2017
 module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
   if(command == driver.DECLARE_INPUTS) {
     return(c(FILE = "common/GCAM_region_names",
@@ -21,6 +21,16 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
              FILE = "emissions/other_f_gases",
              "L144.in_EJ_R_bld_serv_F_Yh",
              FILE = "common/iso_GCAM_regID",
+             FILE = "emissions/EPA_country_map",
+             FILE = "emissions/EPA/EPA_HCFC22",
+             FILE = "emissions/EPA/EPA_ODSS_Aerosols",
+             FILE = "emissions/EPA/EPA_ODSS_FireExt",
+             FILE = "emissions/EPA/EPA_ODSS_Foams",
+             FILE = "emissions/EPA/EPA_ODSS_RefAC",
+             FILE = "emissions/EPA/EPA_ODSS_Solvents",
+             FILE = "emissions/EPA/EPA_Semi_HFCs",
+             FILE = "emissions/EPA_sector_map",
+             FILE = "emissions/EPA_HFC_sector_map",
              FILE = "emissions/EDGAR/EDGAR_sector_fgas",
              FILE = "emissions/EDGAR/EDGAR_HFC125",
              FILE = "emissions/EDGAR/EDGAR_HFC134a",
@@ -47,6 +57,17 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
     other_f_gases <- get_data(all_data, "emissions/other_f_gases")
     L144.in_EJ_R_bld_serv_F_Yh <- get_data(all_data, "L144.in_EJ_R_bld_serv_F_Yh")
     iso_GCAM_regID <- get_data(all_data, "common/iso_GCAM_regID")
+    EPA_HCFC22 <- get_data(all_data, "emissions/EPA/EPA_HCFC22")
+    EPA_ODSS_Aerosols <- get_data(all_data, "emissions/EPA/EPA_ODSS_Aerosols")
+    EPA_ODSS_FireExt <- get_data(all_data, "emissions/EPA/EPA_ODSS_FireExt")
+    EPA_ODSS_Foams <- get_data(all_data, "emissions/EPA/EPA_ODSS_Foams")
+    EPA_ODSS_RefAC <- get_data(all_data, "emissions/EPA/EPA_ODSS_RefAC")
+    EPA_ODSS_Solvents <- get_data(all_data, "emissions/EPA/EPA_ODSS_Solvents")
+    EPA_Semi_HFCs <- get_data(all_data, "emissions/EPA/EPA_Semi_HFCs")
+    EPA_sector_map <- get_data(all_data, "emissions/EPA_sector_map")
+    EPA_HFC_sector_map <- get_data(all_data, "emissions/EPA_HFC_sector_map")
+    HFC_Inventory_GV <- get_data(all_data, "emissions/HFC_Inventory_GV")
+    EPA_country_map <- get_data(all_data, "emissions/EPA_country_map")
     EDGAR_sector <- get_data(all_data, "emissions/EDGAR/EDGAR_sector_fgas")
     EDGAR_HFC125 <- get_data(all_data, "emissions/EDGAR/EDGAR_HFC125")
     EDGAR_HFC134a <- get_data(all_data, "emissions/EDGAR/EDGAR_HFC134a")
@@ -59,7 +80,6 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
     EDGAR_HFC32 <- get_data(all_data, "emissions/EDGAR/EDGAR_HFC32")
     EDGAR_HFC365mfc <- get_data(all_data, "emissions/EDGAR/EDGAR_HFC365mfc")
     EDGAR_HFC43 <- get_data(all_data, "emissions/EDGAR/EDGAR_HFC43")
-    HFC_Inventory_GV <- get_data(all_data, "emissions/HFC_Inventory_GV")
 
     . <- year <- value <- GCAM_region_ID <- sector <- fuel <- service <-
       IPCC_description <- agg_sector <- ISO_A3 <- iso <- EDGAR_agg_sector <-
@@ -67,20 +87,21 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
       SSP2_tot <- EDGAR_tot <- scaler <- supplysector <- subsector <- stub.technology <-
       adj_emissions <- energy <- em_fact <- NULL  # silence package check notes
 
+
     # Beginning processing and Mapping EDGAR HFC emissions to GCAM technologies
 
-    # Add column with Non.CO2 gas name
-    EDGAR_HFC125$Non.CO2 <- "HFC125"
-    EDGAR_HFC134a$Non.CO2 <- "HFC134a"
-    EDGAR_HFC143a$Non.CO2 <- "HFC143a"
-    EDGAR_HFC152a$Non.CO2 <- "HFC152a"
-    EDGAR_HFC227ea$Non.CO2 <- "HFC227ea"
-    EDGAR_HFC23$Non.CO2 <- "HFC23"
-    EDGAR_HFC236fa$Non.CO2 <- "HFC236fa"
-    EDGAR_HFC245fa$Non.CO2 <- "HFC245fa"
-    EDGAR_HFC32$Non.CO2 <- "HFC32"
-    EDGAR_HFC365mfc$Non.CO2 <- "HFC365mfc"
-    EDGAR_HFC43$Non.CO2 <- "HFC43"
+  # Add column with Non.CO2 gas name
+  EDGAR_HFC125$Non.CO2 <- "HFC125"
+  EDGAR_HFC134a$Non.CO2 <- "HFC134a"
+  EDGAR_HFC143a$Non.CO2 <- "HFC143a"
+  EDGAR_HFC152a$Non.CO2 <- "HFC152a"
+  EDGAR_HFC227ea$Non.CO2 <- "HFC227ea"
+  EDGAR_HFC23$Non.CO2 <- "HFC23"
+  EDGAR_HFC236fa$Non.CO2 <- "HFC236fa"
+  EDGAR_HFC245fa$Non.CO2 <- "HFC245fa"
+  EDGAR_HFC32$Non.CO2 <- "HFC32"
+  EDGAR_HFC365mfc$Non.CO2 <- "HFC365mfc"
+  EDGAR_HFC43$Non.CO2 <- "HFC43"
 
     # Process all F gasses files then combine and aggregate
     # define function to format and process F gases, map to GCAM regions
@@ -130,11 +151,9 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
       left_join(L141.EDGAR_hfc_R_S_T_Yh.long,
                 by = c("EDGAR_agg_sector", "GCAM_region_ID", "year", "Non.CO2")) %>% # there should be NAs as some sectors have no emissions
       replace_na(list(emissions = 0)) # replace NAs with zero
+    # ==============NOW HAVE COMPLETE EDGAR HFC EMISSIONS
 
-    # Disaggregate HFC cooling emissions to residential and commercial sectors
-    # Calculate share of res/com cooling emissions from L144.in_EJ_R_bld_serv_F_Yh
-    # Apply share to HFC emissions
-
+    # ==============CALCULATES SHARES OF IEA COOLING ENERGY BALANCES THAT GO TO RESIDENTIAL AND COMMERCIAL
     # Select residential and cooling emisssions from L144.in_EJ_R_bld_serv_F_Yh
     L141.R_cooling_T_Yh.long <- L144.in_EJ_R_bld_serv_F_Yh %>%
       filter(service %in% c("comm cooling", "resid cooling"), fuel == "electricity")
@@ -142,18 +161,109 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
     L141.R_cooling_Yh <-  L141.R_cooling_T_Yh.long %>%
       group_by(GCAM_region_ID,year) %>%
       summarize(total = sum(value))
-    # Join in the totals we just calculated and calulate the shares
+    # Join in the totals we just calculated and calculate the shares
     L141.R_cooling_T_Yh.long <- left_join_error_no_match(L141.R_cooling_T_Yh.long,L141.R_cooling_Yh, by = c("GCAM_region_ID", "year")) %>%
       mutate(share = value / total) %>%
       select(GCAM_region_ID, year, service, share, value)
 
     # Add res/com cooling share to HFC and make adjustment
-    L141.hfc_R_S_T_Yh_share<- left_join(L141.hfc_R_S_T_Yh.long,
-                                        L141.R_cooling_T_Yh.long ,
-                                        by = c("GCAM_region_ID", "year", "supplysector" = "service")) %>% # there should be NAs.
+    L141.hfc_R_S_T_Yh.long %>%
+      left_join(L141.R_cooling_T_Yh.long, by = c("GCAM_region_ID", "year", "supplysector" = "service")) %>% # there should be NAs.
       # there are sectors that don't have emissions
       replace_na(list(share = 1)) %>% # replace those shares with "1"
-      mutate(emissions = emissions * share)
+      mutate(emissions = emissions * share) ->
+      L141.hfc_R_S_T_Yh_share
+    # ==============END
+
+    browser()
+    # ==============BEGINNING OF EPA DATA SOURCE MANIPULATION
+    if (emissions.DATA_SOURCE == "EPA") {
+
+      EPA_HCFC22$EPA_sector <- "Production of HCFC-22"
+      EPA_ODSS_Aerosols$EPA_sector <- "ODS Substitutes: MDI Aerosols"
+      EPA_ODSS_FireExt$EPA_sector <- "ODS Substitutes: Fire Extinguishing"
+      EPA_ODSS_Foams$EPA_sector <- "ODS Substitutes: Foam Blowing"
+      EPA_ODSS_RefAC$EPA_sector <- "ODS Substitutes: Refrigeration / Air Conditioning"
+      EPA_ODSS_Solvents$EPA_sector <- "ODS Substitutes: Solvents"
+      EPA_Semi_HFCs$EPA_sector <- "Manufacture of Semiconductors"
+
+      # Combine two main HFC category emissions files, convert to long form, and drop unnecessary secondary region column
+      EPA_HCFC22 %>%
+        bind_rows(EPA_Semi_HFCs) %>%
+        gather_years(value_col = "EPA_emissions") %>%
+        select(-Secondary_Region) ->
+        L141.EPA_HFCs_main
+
+      # Replace EPA's "no data" dash mark with 0 values and convert columns from char to dbl to allow combining with ODS
+      L141.EPA_HFCs_main[,][L141.EPA_HFCs_main[,] == "-"] <- 0
+      L141.EPA_HFCs_main <- mutate(L141.EPA_HFCs_main, EPA_emissions = as.numeric(EPA_emissions))
+
+      # Combine with all ODS Substitute emissions subcategory files, convert to long form
+      EPA_ODSS_Aerosols %>%
+        bind_rows(EPA_ODSS_FireExt, EPA_ODSS_Foams, EPA_ODSS_RefAC, EPA_ODSS_Solvents) %>%
+        gather_years(value_col = "EPA_emissions") ->
+        L141.EPA_HFCs_sub
+
+      # bind all HFCs together
+      L141.EPA_HFCs_sub %>%
+        bind_rows(L141.EPA_HFCs_main) %>%
+        left_join(EPA_country_map, by = c("Country" = "EPA_country")) %>%
+        group_by(GCAM_region_ID, EPA_sector, year) %>%
+        summarise(EPA_emissions = sum(EPA_emissions)) %>%
+        ungroup() ->
+        L141.EPA_HFCs
+
+      # Map EPA sectors to EDGAR_agg_sectors and GCAM supplysectors for matching
+      L141.EPA_HFCs %>%
+        left_join(EPA_HFC_sector_map, by = "EPA_sector") %>%
+        select(GCAM_region_ID, supplysector, EDGAR_agg_sector, year, EPA_emissions) ->
+        L141.EPA_HFCs_sector
+
+      # Interpolate model years not in EPA...=============UNFINISHED
+      L141.EPA_HFCs_sector %>%
+        complete(nesting(GCAM_region_ID, supplysector, EDGAR_agg_sector), year = c(year, BASE_YEARS, FUTURE_YEARS)) %>%
+        arrange(supplysector, year) %>%
+        group_by(supplysector, subsector, technology, minicam.energy.input) %>%
+        mutate(coefficient = approx_fun(year, coefficient, rule = 1)) %>%
+        ungroup() %>%
+
+      # Aggregate individual HFC gas emissions from EDGAR to total HFC emissions to prepare to match to EPA
+      L141.hfc_R_S_T_Yh.long %>%
+        group_by(supplysector, subsector, stub.technology, EPA_sector, EDGAR_agg_sector, MAC_type1, GCAM_region_ID, year) %>%
+        summarise(emissions = sum(emissions)) %>%
+        rename(tot_emissions = emissions) %>%
+        ungroup() ->
+        L141.hfc_R_S_T_Yh_share_totalHFC
+
+      L141.hfc_R_S_T_Yh_share_totalHFC %>%
+        left_join(L141.hfc_R_S_T_Yh.long, by = c("supplysector", "subsector", "stub.technology", "EPA_sector", "EDGAR_agg_sector", "MAC_type1", "GCAM_region_ID", "year")) %>%
+        mutate(share = emissions/tot_emissions) ->
+        L141.EPA_hfc_R_S_T_Yh_share
+
+      # Match total EPA HFC emissions to aggregated EDGAR emissions
+      L141.hfc_R_S_T_Yh_share %>%
+        left_join(L141.EPA_HFCs_sector, by = c("GCAM_region_ID", "supplysector", "EDGAR_agg_sector", "year")) %>%
+        mutate(emissions = EPA_emissions * share) ->
+        L141.EPA_EDGAR_HFCmatch
+
+      # Add res/com cooling share to HFC and make adjustment
+      L141.EPA_EDGAR_hfc_R_S_T_Yh_share <- left_join(L141.EPA_EDGAR_HFCmatch,
+                                           L141.R_cooling_T_Yh.long ,
+                                           by = c("GCAM_region_ID", "year", "supplysector" = "service")) %>% # there should be NAs.
+        # there are sectors that don't have emissions
+        replace_na(list(share = 1)) %>% # replace those shares with "1"
+        mutate(emissions = emissions * share)
+    }
+
+
+
+    # Disaggregate HFC cooling emissions to residential and commercial sectors
+    # Calculate share of res/com cooling emissions from L144.in_EJ_R_bld_serv_F_Yh
+    # Apply share to HFC emissions
+    gather_years()
+
+
+
 
     # Scale HFC Emissions to SSP2 HFC (Guus Velders) inventory (year 2010), where available
 
@@ -202,6 +312,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
       replace_na(list(em_fact = 0)) %>%
       rename(value = em_fact)
 
+    # ===============
     # Produce outputs
     L141.hfc_R_S_T_Yh %>%
       add_title("HFC emissions by region / sector / technology / gas / historical year") %>%
@@ -213,6 +324,15 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
                      "emissions/other_f_gases",
                      "L144.in_EJ_R_bld_serv_F_Yh",
                      "common/iso_GCAM_regID",
+                     "emissions/EPA/EPA_HCFC22",
+                     "emissions/EPA/EPA_ODSS_Aerosols",
+                     "emissions/EPA/EPA_ODSS_FireExt",
+                     "emissions/EPA/EPA_ODSS_Foams",
+                     "emissions/EPA/EPA_ODSS_RefAC",
+                     "emissions/EPA/EPA_ODSS_Solvents",
+                     "emissions/EPA/EPA_Semi_HFCs",
+                     "emissions/EPA_country_map",
+                     "emissions/EPA_HFC_sector_map",
                      "emissions/EDGAR/EDGAR_sector_fgas",
                      "emissions/EDGAR/EDGAR_HFC125",
                      "emissions/EDGAR/EDGAR_HFC134a",
@@ -239,6 +359,16 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
                      "emissions/other_f_gases",
                      "L144.in_EJ_R_bld_serv_F_Yh",
                      "common/iso_GCAM_regID",
+                     "common/iso_GCAM_regID",
+                     "emissions/EPA/EPA_HCFC22",
+                     "emissions/EPA/EPA_ODSS_Aerosols",
+                     "emissions/EPA/EPA_ODSS_FireExt",
+                     "emissions/EPA/EPA_ODSS_Foams",
+                     "emissions/EPA/EPA_ODSS_RefAC",
+                     "emissions/EPA/EPA_ODSS_Solvents",
+                     "emissions/EPA/EPA_Semi_HFCs",
+                     "emissions/EPA_country_map",
+                     "emissions/EPA_HFC_sector_map",
                      "emissions/EDGAR/EDGAR_sector_fgas",
                      "emissions/EDGAR/EDGAR_HFC125",
                      "emissions/EDGAR/EDGAR_HFC134a",

@@ -1,0 +1,200 @@
+# File: EPA_HCFC22.csv
+# Title: High GWP emissions from Production of HCFC22
+# Units: MtCO2eq
+# Description: Sector Industrial Processes
+Country,1990,1995,2000,2005,2010,2015,2020,2025,2030,Rest_of_Region,Main_Region,Secondary_Region
+Afghanistan, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Albania, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Algeria, - , - , - , - , - , - , - , - , - ,,Africa,OPEC
+Andorra, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,
+Angola, - , - , - , - , - , - , - , - , - ,Africa,,OPEC
+Antigua and Barbuda, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Argentina, - , - ,0.1,0.5,0.6,0.7,1.5,1.6,1.7,,Central and South America,
+Armenia, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Australia,1.1,0.7, - , - , - , - , - , - , - ,,OECD,
+Austria, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Azerbaijan, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Bahamas, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Bahrain, - , - , - , - , - , - , - , - , - ,Middle East,,
+Bangladesh, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Barbados, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Belarus, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Belgium, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Belize, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Benin, - , - , - , - , - , - , - , - , - ,Africa,,
+Bhutan, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Bolivia, - , - , - , - , - , - , - , - , - ,,Central and South America,
+Bosnia and Herzegovina, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,
+Botswana, - , - , - , - , - , - , - , - , - ,Africa,,
+Brazil,1.4,1.8, - , - , - , - , - , - , - ,,Central and South America,
+Brunei, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Bulgaria, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,EU
+Burkina Faso, - , - , - , - , - , - , - , - , - ,Africa,,
+Burma, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Burundi, - , - , - , - , - , - , - , - , - ,Africa,,
+Cambodia, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Cameroon, - , - , - , - , - , - , - , - , - ,Africa,,
+Canada,0.8, - , - , - , - , - , - , - , - ,,OECD,
+Cape Verde, - , - , - , - , - , - , - , - , - ,Africa,,
+Central African Republic, - , - , - , - , - , - , - , - , - ,Africa,,
+Chad, - , - , - , - , - , - , - , - , - ,Africa,,
+Chile, - , - , - , - , - , - , - , - , - ,,OECD,
+China, - ,3.2,27.7,91.3,62.1,70,132.2,142.3,147,,Non-OECD Asia,
+Colombia, - , - , - , - , - , - , - , - , - ,,Central and South America,
+Comoros, - , - , - , - , - , - , - , - , - ,Africa,,
+Congo (Brazzaville), - , - , - , - , - , - , - , - , - ,Africa,,
+Congo (Kinshasa), - , - , - , - , - , - , - , - , - ,,Africa,
+Cook Islands, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Costa Rica, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Cote d'Ivoire, - , - , - , - , - , - , - , - , - ,Africa,,
+Croatia, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Cuba, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Cyprus, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,EU
+Czech Republic, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Denmark, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Djibouti, - , - , - , - , - , - , - , - , - ,Africa,,
+Dominica, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Dominican Republic, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Ecuador, - , - , - , - , - , - , - , - , - ,,Central and South America,OPEC
+Egypt, - , - , - , - , - , - , - , - , - ,,Africa,
+El Salvador, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Equatorial Guinea, - , - , - , - , - , - , - , - , - ,Africa,,
+Eritrea, - , - , - , - , - , - , - , - , - ,Africa,,
+Estonia, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,EU
+Ethiopia, - , - , - , - , - , - , - , - , - ,,Africa,
+Fiji, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Finland, - , - , - , - , - , - , - , - , - ,,OECD,EU
+France,1.6,0.2,0.3,0.3, - , - , - , - , - ,,OECD,EU
+Gabon, - , - , - , - , - , - , - , - , - ,Africa,,
+Gambia, - , - , - , - , - , - , - , - , - ,Africa,,
+Georgia, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Germany,2.5,1.5,0.1,0.2,0.3,0.4,0.4,0.5,0.6,,OECD,EU
+Ghana, - , - , - , - , - , - , - , - , - ,Africa,,
+Greece,0.9,3.3,3.7,2.2, - , - , - , - , - ,,OECD,EU
+Grenada, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Guatemala, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Guinea, - , - , - , - , - , - , - , - , - ,Africa,,
+Guinea-Bissau, - , - , - , - , - , - , - , - , - ,Africa,,
+Guyana, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Haiti, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Holy See, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,
+Honduras, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Hungary, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Iceland, - , - , - , - , - , - , - , - , - ,,OECD,
+India, - ,6.4,16.8,34.2,29.1,37.3,75.2,80.9,83.6,,Non-OECD Asia,
+Indonesia, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Iran, - , - , - , - , - , - , - , - , - ,,Middle East,OPEC
+Iraq, - , - , - , - , - , - , - , - , - ,,Middle East,OPEC
+Ireland, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Israel, - , - , - , - , - , - , - , - , - ,,OECD,
+Italy,0.4,0.4,0.1,0.2, - , - , - , - , - ,,OECD,EU
+Jamaica, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Japan,13.2,17,12.4,0.5,0.2,0.3,0.4,0.9,2.1,,OECD,
+Jordan, - , - , - , - , - , - , - , - , - ,,Middle East,
+Kazakhstan, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Kenya, - , - , - , - , - , - , - , - , - ,Africa,,
+Kiribati, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Kuwait, - , - , - , - , - , - , - , - , - ,,Middle East,OPEC
+Kyrgyzstan, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Laos, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Latvia, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,EU
+Lebanon, - , - , - , - , - , - , - , - , - ,Middle East,,
+Lesotho, - , - , - , - , - , - , - , - , - ,Africa,,
+Liberia, - , - , - , - , - , - , - , - , - ,Africa,,
+Libya, - , - , - , - , - , - , - , - , - ,Africa,,OPEC
+Liechtenstein, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,#REF!,
+Lithuania, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,EU
+Luxembourg, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Macedonia, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Madagascar, - , - , - , - , - , - , - , - , - ,Africa,,
+Malawi, - , - , - , - , - , - , - , - , - ,Africa,,
+Malaysia, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Maldives, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Mali, - , - , - , - , - , - , - , - , - ,Africa,,
+Malta, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,EU
+Marshall Islands, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Mauritania, - , - , - , - , - , - , - , - , - ,Africa,,
+Mauritius, - , - , - , - , - , - , - , - , - ,Africa,,
+Mexico,4.4,2.4,5.1,12.6,10.2,13.1,26.5,28.5,29.4,,OECD,
+Micronesia (Federated States of), - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Moldova, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Monaco, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Mongolia, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Montenegro, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,
+Morocco, - , - , - , - , - , - , - , - , - ,Africa,,
+Mozambique, - , - , - , - , - , - , - , - , - ,Africa,,
+Namibia, - , - , - , - , - , - , - , - , - ,Africa,,
+Nauru, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Nepal, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Netherlands,4.4,5.8,2.4,0.2,0.2,0.2,0.3,0.3,0.4,,OECD,EU
+New Zealand, - , - , - , - , - , - , - , - , - ,,OECD,
+Nicaragua, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Niger, - , - , - , - , - , - , - , - , - ,Africa,,
+Nigeria, - , - , - , - , - , - , - , - , - ,,Africa,OPEC
+Niue, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+North Korea, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Norway, - , - , - , - , - , - , - , - , - ,,OECD,
+Oman, - , - , - , - , - , - , - , - , - ,Middle East,,
+Pakistan, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Palau, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Panama, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Papua New Guinea, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Paraguay, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Peru, - , - , - , - , - , - , - , - , - ,,Central and South America,
+Philippines, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Poland, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Portugal, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Qatar, - , - , - , - , - , - , - , - , - ,Middle East,,OPEC
+Romania, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,EU
+Russia,28.4,12.2,20.9,14.1,9.3,6.9,4.6,5.9,7.5,,Non-OECD Europe & Eurasia,
+Rwanda, - , - , - , - , - , - , - , - , - ,Africa,,
+Saint Kitts and Nevis, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Saint Lucia, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Saint Vincent and the Grenadines, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Samoa, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+San Marino, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,
+Sao Tome and Principe, - , - , - , - , - , - , - , - , - ,Africa,,
+Saudi Arabia, - , - , - , - , - , - , - , - , - ,,Middle East,OPEC
+Senegal, - , - , - , - , - , - , - , - , - ,,Africa,
+Serbia, - , - , - , - , - , - , - , - , - ,Non-OECD Europe & Eurasia,,
+Seychelles, - , - , - , - , - , - , - , - , - ,Africa,,
+Sierra Leone, - , - , - , - , - , - , - , - , - ,Africa,,
+Singapore, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Slovakia, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Slovenia, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Solomon Islands, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Somalia, - , - , - , - , - , - , - , - , - ,Africa,,
+South Africa, - ,1.2, - , - , - , - , - , - , - ,,Africa,
+South Korea, - ,2.1,5.6,5.2,1.6,2.1,4.2,4.5,4.7,,OECD,
+Spain,2.4,4.6,6.3,0.3,0.4,0.4,0.5,0.6,0.8,,OECD,EU
+Sri Lanka, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Sudan, - , - , - , - , - , - , - , - , - ,Africa,,
+Suriname, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Swaziland, - , - , - , - , - , - , - , - , - ,Africa,,
+Sweden, - , - , - , - , - , - , - , - , - ,,OECD,EU
+Switzerland, - , - , - , - , - , - , - , - , - ,,OECD,
+Syria, - , - , - , - , - , - , - , - , - ,Middle East,,
+Tajikistan, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Tanzania, - , - , - , - , - , - , - , - , - ,Africa,,
+Thailand, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Timor-Leste, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Togo, - , - , - , - , - , - , - , - , - ,Africa,,
+Tonga, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Trinidad and Tobago, - , - , - , - , - , - , - , - , - ,Central and South America,,
+Tunisia, - , - , - , - , - , - , - , - , - ,Africa,,
+Turkey, - , - , - , - , - , - , - , - , - ,,OECD,
+Turkmenistan, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Tuvalu, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Uganda, - , - , - , - , - , - , - , - , - ,,Africa,
+Ukraine, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+United Arab Emirates, - , - , - , - , - , - , - , - , - ,,Middle East,OPEC
+United Kingdom,3.4,2,1.1,0.8, - , - , - , - , - ,,OECD,EU
+United States,36.4,33,28.6,15.8,11.8,10.6,10.8,7.9,6,,OECD,
+Uruguay, - , - , - , - , - , - , - , - , - ,,Central and South America,
+Uzbekistan, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,
+Vanuatu, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
+Venezuela,2.7,1.8,0.7,0.8,1.9,2.1,2.2,2.3,2.4,,Central and South America,OPEC
+Vietnam, - , - , - , - , - , - , - , - , - ,,Non-OECD Asia,
+Yemen, - , - , - , - , - , - , - , - , - ,Middle East,,
+Zambia, - , - , - , - , - , - , - , - , - ,Africa,,
+Zimbabwe, - , - , - , - , - , - , - , - , - ,Africa,,

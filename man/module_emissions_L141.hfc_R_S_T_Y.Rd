@@ -25,5 +25,5 @@ adjusted to match the Guus Velders HFC inventory.
 Describe in detail what this chunk does.
 }
 \author{
-RMH Aug 2017
+CWR Dec 2017
 }
