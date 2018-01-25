@@ -1,7 +1,7 @@
-# File: EPA_HFC_sector_map.csv
-# Title: Map of EPA sectors to GCAM sectors for HFC gases
-# Description: Detailed and aggregate EPA global emissions projections sectors mapped to their gas sources
-# Units: Unitless
+# File: EPA_HFC_sector_map.csv,,,
+# Title: Map of EPA sectors to GCAM sectors for HFC gases,,,
+# Description: Detailed and aggregate EPA global emissions projections sectors mapped to their gas sources,,,
+# Units: Unitless,,,
 EPA_sector,EPA_agg_sector,supplysector,EDGAR_agg_sector
 ODS Substitutes: Refrigeration / Air Conditioning,Industrial Processes,comm cooling,refrigeration
 ODS Substitutes: Refrigeration / Air Conditioning,Industrial Processes,resid cooling,refrigeration
