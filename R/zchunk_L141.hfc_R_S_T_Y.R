@@ -185,8 +185,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
       mutate(year = 2010)
     L141.hfc_R_S_T_Yh_share <- bind_rows(L141.hfc_R_S_T_Yh_share, TEMP)
 
-
-    browser()
+    emissions.DATA_SOURCE <- "EPA"
     # =========================================================
     # NEW DATA FLOW - SCALE EDGAR EMISSIONS TO MATCH EPA TOTALS
     # =========================================================
@@ -217,7 +216,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
         gather_years(value_col = "EPA_emissions") ->
         L141.EPA_HFCs_sub
 
-      # bind all HFCs together
+      # bind all HFCs together, join to GCAM regions and aggregate country emissions to GCAM regions
       L141.EPA_HFCs_sub %>%
         bind_rows(L141.EPA_HFCs_main) %>%
         left_join(EPA_country_map, by = c("Country" = "EPA_country")) %>%
@@ -295,6 +294,8 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
         select(-EPA_emissions, -tot_emissions, -emissions, -emshare) %>%
         filter(year %in% EPA_YEARS) -> L141.EPA_HFC_R_S_T_Yh_adj
 
+      L141.hfc_R_S_T_Yh <- L141.EPA_HFC_R_S_T_Yh_adj
+
       # Compute final cooling HFC emissions factors
       L141.EPA_HFC_R_S_T_Yh_adj %>%
         filter(supplysector %in% c("comm cooling", "resid cooling"), year %in% HISTORICAL_YEARS) %>%
@@ -364,14 +365,9 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
         rename(value = em_fact)
     }
 
-
     # Disaggregate HFC cooling emissions to residential and commercial sectors
     # Calculate share of res/com cooling emissions from L144.in_EJ_R_bld_serv_F_Yh
     # Apply share to HFC emissions
-    gather_years()
-
-
-
 
     # ===============
     # Produce outputs

@@ -26,7 +26,19 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
              FILE = "emissions/A41.GWP",
              FILE = "emissions/EDGAR/EDGAR_SF6",
              FILE = "emissions/EDGAR/EDGAR_C2F6",
-             FILE = "emissions/EDGAR/EDGAR_CF4"))
+             FILE = "emissions/EDGAR/EDGAR_CF4",
+             FILE = "emissions/EPA/EPA_PFC_Al",
+             FILE = "emissions/EPA/EPA_PFC_FPD",
+             FILE = "emissions/EPA/EPA_PFC_PV",
+             FILE = "emissions/EPA/EPA_PFC_Semi",
+             FILE = "emissions/EPA/EPA_SF6_EPS",
+             FILE = "emissions/EPA/EPA_SF6_FPD",
+             FILE = "emissions/EPA/EPA_SF6_Magn",
+             FILE = "emissions/EPA/EPA_SF6_Semi",
+             FILE = "emissions/EPA_sector_map",
+             FILE = "emissions/EPA_HFC_sector_map",
+             FILE = "emissions/EPA_GWPs",
+             FILE = "emissions/EPA_country_map"))
   } else if(command == driver.DECLARE_OUTPUTS) {
     return(c("L142.pfc_R_S_T_Yh"))
   } else if(command == driver.MAKE) {
@@ -47,6 +59,8 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
     EDGAR_sector <- get_data(all_data, "emissions/EDGAR/EDGAR_sector_fgas")
     GWP <- get_data(all_data, "emissions/A41.GWP")
 
+    browser()
+
     L144.in_EJ_R_bld_serv_F_Yh <- get_data(all_data, "L144.in_EJ_R_bld_serv_F_Yh")
     get_data(all_data, "emissions/EDGAR/EDGAR_SF6") %>%
       gather_years ->
@@ -57,6 +71,18 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
     get_data(all_data, "emissions/EDGAR/EDGAR_CF4") %>%
       gather_years ->
       EDGAR_CF4
+    EPA_PFC_Al <- get_data(all_data, "emissions/EPA/EPA_PFC_Al")
+    EPA_PFC_FPD <- get_data(all_data, "emissions/EPA/EPA_PFC_FPD")
+    EPA_PFC_PV <- get_data(all_data, "emissions/EPA/EPA_PFC_PV")
+    EPA_PFC_Semi <- get_data(all_data, "emissions/EPA/EPA_PFC_Semi")
+    EPA_SF6_EPS <- get_data(all_data, "emissions/EPA/EPA_SF6_EPS")
+    EPA_SF6_FPD <- get_data(all_data, "emissions/EPA/EPA_SF6_FPD")
+    EPA_SF6_Magn <- get_data(all_data, "emissions/EPA/EPA_SF6_Magn")
+    EPA_SF6_Semi <- get_data(all_data, "emissions/EPA/EPA_SF6_Semi")
+    EPA_sector_map <- get_data(all_data, "emissions/EPA_sector_map")
+    EPA_HFC_sector_map <- get_data(all_data, "emissions/EPA_HFC_sector_map")
+    EPA_GWPs <- get_data(all_data, "emissions/EPA_GWPs")
+    EPA_country_map <- get_data(all_data, "emissions/EPA_country_map")
 
     # This chunk maps EDGAR HFC emissions to GCAM technologies
     # First, create a table with all EDGAR HFCs, and prep "Other_F" table for use by renaming column.
@@ -103,7 +129,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       select(-EDGAR_agg_sector) %>%
       rename(EDGAR_agg_sector = Sector) %>%
       bind_rows(L142.EDGAR_PFC_R_S_T_Yh_rest, .) %>%
-      ungroup() ->                                              # ungroup needed for later `left_join_keep_first_only`
+      ungroup() ->                         # ungroup needed for later `left_join_keep_first_only`
       L142.EDGAR_PFC_R_S_T_Yh.tmp1
 
     # Map PFC gases to GCAM technologies.
@@ -151,8 +177,57 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       rename(value = emissions) ->
       L142.pfc_R_S_T_Yh
 
-    # Produce outputs
+    emissions.DATA_SOURCE <- "EPA"
+    # =========================================================
+    # NEW DATA FLOW - SCALE EDGAR EMISSIONS TO MATCH EPA TOTALS
+    # =========================================================
+    if (emissions.DATA_SOURCE == "EPA") {
 
+      EPA_PFC_Al$EPA_sector <- "Aluminum"
+      EPA_PFC_FPD$EPA_sector <- "Flat Panel Display Manufacturing"
+      EPA_PFC_PV$EPA_sector <- "Photovoltaic Manufacturing"
+      EPA_PFC_Semi$EPA_sector <- "Manufacture of Semiconductors"
+      EPA_SF6_EPS$EPA_sector <- "Electric Power Systems"
+      EPA_SF6_FPD$EPA_sector <- "Flat Panel Display Manufacturing"
+      EPA_SF6_Magn$EPA_sector <- "Magnesium Manufacturing"
+      EPA_SF6_Semi$EPA_sector <- "Manufacture of Semicondutors"
+
+      # Combine two main HFC category emissions files, convert to long form, and drop unnecessary secondary region column
+      EPA_PFC_Al %>%
+        bind_rows(EPA_PFC_FPD, EPA_PFC_PV, EPA_PFC_Semi) %>%
+        gather_years(value_col = "EPA_emissions") ->
+        L141.EPA_PFCs_main
+      L141.EPA_PFCs_main$gas <- "PFC"
+
+      EPA_SF6_EPS %>%
+        bind_rows(EPA_SF6_FPD, EPA_SF6_Magn, EPA_SF6_Semi) %>%
+        gather_years(value_col = "EPA_emissions") ->
+        L141.EPA_SF6_main
+      L141.EPA_SF6_main$gas <- "SF6"
+
+      L141.EPA_SF6_main %>%
+        bind_rows(L141.EPA_PFCs_main) %>%
+        select(-Secondary_Region) ->
+        L141.EPA_PFCs
+
+      # Replace EPA's "no data" dash mark with 0 values and convert columns from char to dbl
+      L141.EPA_PFCs[,][L141.EPA_PFCs[,] == "-"] <- 0
+      L141.EPA_PFCs <- mutate(L141.EPA_PFCs, EPA_emissions = as.numeric(EPA_emissions))
+
+      # Map countries to GCAM regions and aggregate country emissions to GCAM regions
+      L141.EPA_PFCs %>%
+        left_join(EPA_country_map, by = c("Country" = "EPA_country")) %>%
+        group_by(GCAM_region_ID, EPA_sector, gas, year) %>%
+        summarise(EPA_emissions = sum(EPA_emissions)) %>%
+        ungroup() ->
+        L141.EPA_PFCs_R_S_Y
+
+
+    }
+    else {}
+
+    # Produce outputs
+    # ===============
     L142.pfc_R_S_T_Yh %>%
       add_title("HFC emissions by region, sector, technology, gas, and historical year") %>%
       add_units("Gg") %>%
