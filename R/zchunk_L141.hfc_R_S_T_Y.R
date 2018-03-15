@@ -30,7 +30,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
              FILE = "emissions/EPA/EPA_ODSS_Solvents",
              FILE = "emissions/EPA/EPA_Semi_HFCs",
              FILE = "emissions/EPA_sector_map",
-             FILE = "emissions/EPA_HFC_sector_map",
+             FILE = "emissions/EPA_fgas_sector_map",
              FILE = "emissions/EPA_GWPs",
              FILE = "emissions/EDGAR/EDGAR_sector_fgas",
              FILE = "emissions/EDGAR/EDGAR_HFC125",
@@ -52,6 +52,8 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
 
     all_data <- list(...)[[1]]
 
+    browser()
+
     # Load required inputs
     GCAM_region_names <- get_data(all_data, "common/GCAM_region_names")
     gcam_fgas_tech <- get_data(all_data, "emissions/gcam_fgas_tech")
@@ -66,7 +68,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
     EPA_ODSS_Solvents <- get_data(all_data, "emissions/EPA/EPA_ODSS_Solvents")
     EPA_Semi_HFCs <- get_data(all_data, "emissions/EPA/EPA_Semi_HFCs")
     EPA_sector_map <- get_data(all_data, "emissions/EPA_sector_map")
-    EPA_HFC_sector_map <- get_data(all_data, "emissions/EPA_HFC_sector_map")
+    EPA_fgas_sector_map <- get_data(all_data, "emissions/EPA_fgas_sector_map")
     HFC_Inventory_GV <- get_data(all_data, "emissions/HFC_Inventory_GV")
     EPA_country_map <- get_data(all_data, "emissions/EPA_country_map")
     EPA_GWPs <- get_data(all_data, "emissions/EPA_GWPs")
@@ -227,7 +229,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
 
       # Map EPA sectors to EDGAR_agg_sectors and GCAM supplysectors for matching
       L141.EPA_HFCs %>%
-        left_join(EPA_HFC_sector_map, by = "EPA_sector") %>%
+        left_join(EPA_fgas_sector_map, by = "EPA_sector") %>%
         select(GCAM_region_ID, supplysector, EDGAR_agg_sector, year, EPA_emissions) ->
         L141.EPA_HFCs_sector
 
@@ -240,6 +242,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
         ungroup() ->
         L141.EPA_HFCs_sector_full
 
+      # Adjust EDGAR individual ggs of gas to EPA's GWP values to be able to aggregate multiple gases together for scaling
       L141.hfc_R_S_T_Yh_share %>%
         left_join_error_no_match(EPA_GWPs, by = c("Non.CO2" = "gas")) %>%
         mutate(emissions = emissions * gwp * gg_to_tg) %>%
@@ -291,9 +294,15 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
       # Set constant (MOVE TO CONSTANTS.R ONCE FIXED)
       EPA_YEARS <- c(1990, 1995, 2000, 2005, 2010)
       L141.EPA_EDGAR_HFCmatch %>% #remove columns used in calculation (once testing is completed, integrate with above pipeline)
-        select(-EPA_emissions, -tot_emissions, -emissions, -emshare) %>%
-        filter(year %in% EPA_YEARS) -> L141.EPA_HFC_R_S_T_Yh_adj
+        filter(year %in% EPA_YEARS) %>%
+        # Convert matched values back to gg prior to reading out emissions and calculating EFs
+        left_join_error_no_match(EPA_GWPs, by = c("Non.CO2" = "gas")) %>%
+        mutate(value = adj_emissions / gwp / gg_to_tg) %>%
+        select(GCAM_region_ID, supplysector, subsector, stub.technology, Non.CO2, year, adj_emissions) %>%
+        replace_na(list(adj_emissions = 0)) ->
+        L141.EPA_HFC_R_S_T_Yh_adj
 
+      # Overwrite original output file
       L141.hfc_R_S_T_Yh <- L141.EPA_HFC_R_S_T_Yh_adj
 
       # Compute final cooling HFC emissions factors
@@ -304,7 +313,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
         mutate(em_fact = adj_emissions / energy) %>%
         select(GCAM_region_ID, supplysector, subsector, stub.technology, Non.CO2, year, em_fact) %>%
         replace_na(list(em_fact = 0)) %>%
-        rename(value = em_fact) -> L141.hfc_ef_R_cooling_Yh_eq
+        rename(value = em_fact) -> L141.hfc_ef_R_cooling_Yh
       # Add res/com cooling share to HFC and make adjustment
       # L141.EPA_EDGAR_hfc_R_S_T_Yh_share <- left_join(L141.EPA_EDGAR_HFCmatch,
       #                                      L141.R_cooling_T_Yh.long ,
@@ -312,12 +321,6 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
         # there are sectors that don't have emissions
         # replace_na(list(share = 1)) %>% # replace those shares with "1"
         # mutate(emissions = emissions * share)
-
-      # remove CO2 equivalence used for matching, returning to gg
-      L141.hfc_ef_R_cooling_Yh_eq %>%
-        left_join_error_no_match(EPA_GWPs, by = c("Non.CO2" = "gas")) %>%
-        mutate(value = value / gwp / gg_to_tg) ->
-        L141.hfc_ef_R_cooling_Yh
 
     }
     # ===========================================
@@ -389,7 +392,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
                      "emissions/EPA/EPA_ODSS_Solvents",
                      "emissions/EPA/EPA_Semi_HFCs",
                      "emissions/EPA_country_map",
-                     "emissions/EPA_HFC_sector_map",
+                     "emissions/EPA_fgas_sector_map",
                      "emissions/EPA_GWPs",
                      "emissions/EDGAR/EDGAR_sector_fgas",
                      "emissions/EDGAR/EDGAR_HFC125",
@@ -426,7 +429,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
                      "emissions/EPA/EPA_ODSS_Solvents",
                      "emissions/EPA/EPA_Semi_HFCs",
                      "emissions/EPA_country_map",
-                     "emissions/EPA_HFC_sector_map",
+                     "emissions/EPA_fgas_sector_map",
                      "emissions/EPA_GWPs",
                      "emissions/EDGAR/EDGAR_sector_fgas",
                      "emissions/EDGAR/EDGAR_HFC125",
