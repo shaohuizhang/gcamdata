@@ -52,8 +52,6 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
 
     all_data <- list(...)[[1]]
 
-    browser()
-
     # Load required inputs
     GCAM_region_names <- get_data(all_data, "common/GCAM_region_names")
     gcam_fgas_tech <- get_data(all_data, "emissions/gcam_fgas_tech")
@@ -233,7 +231,7 @@ module_emissions_L141.hfc_R_S_T_Y <- function(command, ...) {
         select(GCAM_region_ID, supplysector, EDGAR_agg_sector, year, EPA_emissions) ->
         L141.EPA_HFCs_sector
 
-      # Interpolate model years not in EPA...=============UNFINISHED AND NOT NEEDED IF WE FILTER FOR YEARS.
+      # Interpolate model years not in EPA...=============NOT NEEDED IF WE FILTER FOR YEARS.
       L141.EPA_HFCs_sector %>%
         complete(nesting(GCAM_region_ID, supplysector, EDGAR_agg_sector), year = c(year, HISTORICAL_YEARS)) %>%
         arrange(supplysector, year) %>%

@@ -1,7 +1,7 @@
 # File: EPA_PFC_PV.csv
 # Title: EPA PFC emissions from photovoltaics
-# Description: Sector, Industrial Processes, Photovoltaic Manufacturing
-# Units: MtCO2e,Industrial Processes
+# Description: Sector Industrial Processes Photovoltaic Manufacturing
+# Units: MtCO2e
 Country,1990,1995,2000,2005,2010,2015,2020,2025,2030,Rest_of_Region,Main_Region,Secondary_Region
 Afghanistan, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
 Albania, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,

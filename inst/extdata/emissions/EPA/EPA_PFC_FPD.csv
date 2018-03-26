@@ -1,7 +1,7 @@
-# File: EPA_PFC_FPD.csv
-# Title: EPA PFC emissions from flat panel displays,Flat Panel Display Manufacturing
-# Description: Sector, Industrial Processes, Flat Panel Display Manufacturing
-# Units: MtCO2e
+# File: EPA_PFC_FPD.csv,,,,,,,,,,,,
+# Title: EPA PFC emissions from flat panel displays,,,,,,,,,,,,
+# Description: Sector Industrial Processes Flat Panel Display Manufacturing,,,,,,,,,,,,
+# Units: MtCO2e,,,,,,,,,,,,
 Country,1990,1995,2000,2005,2010,2015,2020,2025,2030,Rest_of_Region,Main_Region,Secondary_Region
 Afghanistan, - , - , - , - , - , - , - , - , - ,Non-OECD Asia,,
 Albania, - , - , - , - , - , - , - , - , - ,,Non-OECD Europe & Eurasia,

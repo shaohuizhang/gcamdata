@@ -59,8 +59,6 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
     EDGAR_sector <- get_data(all_data, "emissions/EDGAR/EDGAR_sector_fgas")
     GWP <- get_data(all_data, "emissions/A41.GWP")
 
-    browser()
-
     L144.in_EJ_R_bld_serv_F_Yh <- get_data(all_data, "L144.in_EJ_R_bld_serv_F_Yh")
     get_data(all_data, "emissions/EDGAR/EDGAR_SF6") %>%
       gather_years ->
@@ -177,6 +175,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       rename(value = emissions) ->
       L142.pfc_R_S_T_Yh
 
+    browser()
     # =========================================================
     # NEW DATA FLOW - SCALE EDGAR EMISSIONS TO MATCH EPA TOTALS
     # =========================================================
@@ -201,18 +200,21 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       EPA_SF6_Semi$EPA_sector <- "Manufacture of Semiconductors"
 
       # Combine two main PFC category emissions files, convert to long form, and drop unnecessary secondary region column
+      # Assign PFC gas name to PFC emissions sources
       EPA_PFC_Al %>%
         bind_rows(EPA_PFC_FPD, EPA_PFC_PV, EPA_PFC_Semi) %>%
         gather_years(value_col = "EPA_emissions") ->
         L142.EPA_PFCs_main
       L142.EPA_PFCs_main$gas <- "PFC"
 
+      # Assign SF6 gas name to SF6 emissions sources
       EPA_SF6_EPS %>%
         bind_rows(EPA_SF6_FPD, EPA_SF6_Magn, EPA_SF6_Semi) %>%
         gather_years(value_col = "EPA_emissions") ->
         L142.EPA_SF6_main
       L142.EPA_SF6_main$gas <- "SF6"
 
+      # Combine SF6 and PFC emissions into one data frame
       L142.EPA_SF6_main %>%
         bind_rows(L142.EPA_PFCs_main) %>%
         select(-Secondary_Region) ->
@@ -230,10 +232,13 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
         ungroup() ->
         L142.EPA_PFCs_R_S_Y
 
-      # Map EPA emissions data to GCAM sectors
+      # Map EPA emissions data to GCAM sectors and aggregate EPA sectors to level of GCAM sectors (combine FPD and Semiconductors)
       L142.EPA_PFCs_R_S_Y %>%
         left_join(EPA_fgas_sector_map, by = "EPA_sector") %>%
-        select(GCAM_region_ID, supplysector, subsector, stub.technology, EDGAR_agg_sector, gas, year, EPA_emissions) ->
+        select(GCAM_region_ID, supplysector, subsector, stub.technology, EDGAR_agg_sector, gas, year, EPA_emissions) %>%
+        group_by(GCAM_region_ID, supplysector, subsector, stub.technology, EDGAR_agg_sector, gas, year) %>%
+        summarise(EPA_emissions = sum(EPA_emissions)) %>%
+        ungroup() ->
         L142.EPA_PFCs_sector
 
       # Interpolate model years not in EPA (between start and end year)
@@ -244,6 +249,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
         mutate(EPA_emissions = approx_fun(year, EPA_emissions, rule = 1)) %>%
         ungroup() ->
         L142.EPA_PFCs_sector_full
+
 
       # Prepare and aggregate EDGAR emissions for matching
       # --------------------------------------------------
@@ -280,7 +286,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       L142.pfc_R_S_T_Yh_cool %>%
         ungroup() %>%
         filter(Non.CO2 != "SF6") %>%
-        group_by(supplysector, subsector, stub.technology, GCAM_region_ID, year) %>%
+        group_by(GCAM_region_ID, supplysector, subsector, stub.technology, year) %>%
         summarise(emissions = sum(emissions)) %>%
         ungroup() %>%
         mutate(Non.CO2 = "PFC") %>%
@@ -300,11 +306,11 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
         L142.EPA_pfc_R_S_T_Yh_scalar
 
       # Add additional 'gas' column to identify C2F6 and CF4 as PFCs for match with EPA
-      L142.pfc_R_S_T_Yh_base %>%
+      L142.pfc_R_S_T_Yh_GWP %>%
         filter(Non.CO2 != "SF6") %>%
         mutate(gas = "PFC") -> L142.pfc_R_S_T_Yh_gas
 
-      L142.pfc_R_S_T_Yh_base %>%
+      L142.pfc_R_S_T_Yh_GWP %>%
         filter(Non.CO2 == "SF6") %>%
         mutate(gas = "SF6") %>%
         bind_rows(L142.pfc_R_S_T_Yh_gas) -> L142.pfc_R_S_T_Yh_gas2
@@ -313,7 +319,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       L142.pfc_R_S_T_Yh_gas2 %>%
         inner_join(L142.EPA_pfc_R_S_T_Yh_scalar, by = c("GCAM_region_ID", "supplysector", "subsector", "stub.technology",
                                             "gas" = "Non.CO2", "year")) %>%
-        mutate(adj_emissions = value * emscalar) ->
+        mutate(adj_emissions = emissions * emscalar) ->
         L142.EPA_EDGAR_PFCmatch_nocool
 
       # Fixing cooling sector mismatch
@@ -324,7 +330,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
         left_join(L142.EPA_pfc_R_S_T_Yh_scalar, by = c("GCAM_region_ID", "supply" = "supplysector", "subsector",
                                                        "stub.technology", "gas" = "Non.CO2", "year")) %>%
         select(-supply) %>%
-        mutate(adj_emissions = value * emscalar) %>%
+        mutate(adj_emissions = emissions * emscalar) %>%
         bind_rows(L142.EPA_EDGAR_PFCmatch_nocool) ->
         L142.EPA_EDGAR_PFCmatch
 
@@ -342,7 +348,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       # Set constant (MOVE TO CONSTANTS.R ONCE FIXED)
       EPA_YEARS <- c(1990, 1995, 2000, 2005, 2010)
       L142.EPA_EDGAR_PFCmatch_adj %>% #remove columns used in calculation (once testing is completed, integrate with above pipeline)
-        select(-EPA_emissions, -tot_emissions, -EPA_emissions, -emscalar, -gas, -value) %>%
+        select(-EPA_emissions, -tot_emissions, -EPA_emissions, -emscalar, -gas, -emissions) %>%
         rename(value = adj_emissions) %>%
         # remove CO2 equivalence used for matching, returning units to gg
         left_join_error_no_match(EPA_GWPs, by = c("Non.CO2" = "gas")) %>%
