@@ -176,6 +176,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       L142.pfc_R_S_T_Yh
 
     browser()
+
     # =========================================================
     # NEW DATA FLOW - SCALE EDGAR EMISSIONS TO MATCH EPA TOTALS
     # =========================================================
@@ -220,9 +221,9 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
         select(-Secondary_Region) ->
         L142.EPA_PFCs
 
-      # Replace EPA's "no data" dash mark with 0 values and convert columns from char to dbl
-      L142.EPA_PFCs[,][L142.EPA_PFCs[,] == "-"] <- 0
-      L142.EPA_PFCs <- mutate(L142.EPA_PFCs, EPA_emissions = as.numeric(EPA_emissions))
+      # Replace EPA's "no data" dash mark with 0 values and convert columns from char to dbl (unneeded with new csvs)
+      # L142.EPA_PFCs[,][L142.EPA_PFCs[,] == "-"] <- 0
+      # L142.EPA_PFCs <- mutate(L142.EPA_PFCs, EPA_emissions = as.numeric(EPA_emissions))
 
       # Map countries to GCAM regions and aggregate country emissions to GCAM regions
       L142.EPA_PFCs %>%
@@ -232,7 +233,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
         ungroup() ->
         L142.EPA_PFCs_R_S_Y
 
-      # Map EPA emissions data to GCAM sectors and aggregate EPA sectors to level of GCAM sectors (combine FPD and Semiconductors)
+      # Map EPA emissions data to GCAM sectors and aggregate EPA sectors to level of GCAM sectors (combine FPD, PV, and Semiconductors)
       L142.EPA_PFCs_R_S_Y %>%
         left_join(EPA_fgas_sector_map, by = "EPA_sector") %>%
         select(GCAM_region_ID, supplysector, subsector, stub.technology, EDGAR_agg_sector, gas, year, EPA_emissions) %>%
@@ -334,12 +335,49 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
         bind_rows(L142.EPA_EDGAR_PFCmatch_nocool) ->
         L142.EPA_EDGAR_PFCmatch
 
-      # Replace sectors with infinite scalar values with their original EPA value
-      L142.EPA_EDGAR_PFCmatch %>%
-        filter(is.infinite(emscalar)) %>%
-        mutate(adj_emissions = EPA_emissions) -> L142.EPA_EDGAR_PFCmatch_inf
+      # A bit of a complicated fix
+      # We need to calculate replacement values for infinite values in which there is no 1-1 map from EPA_emissions to EDGAR emissions categories
+      # (i.e. there is more than one type of PFC gas and the EPA emissions need to be shared out to the individual EDGAR gases)
+      # This currently works despite cooling sector mismatch (comm cooling/resid cooling vs. cooling) because there are no infinite values in cooling.
+      # If infinite values are found in cooling sector, this sector aggregation will need to be coded in here.
+      L142.pfc_R_S_T_Yh_GWP %>%
+        group_by(supplysector, subsector, stub.technology, year, Non.CO2) %>%
+        summarise(emissions = sum(emissions)) %>%
+        ungroup() ->
+        L142.pfc_R_S_T_Yh_gas3
 
-      #Rebind replaced infinite values to the original df
+      # Adds gas column back in for matching with PFC gases
+      L142.pfc_R_S_T_Yh_gas3 %>%
+        filter(Non.CO2 != "SF6") %>%
+        mutate(gas = "PFC") -> TEMPPFC
+
+      L142.pfc_R_S_T_Yh_gas3 %>%
+        filter(Non.CO2 == "SF6") %>%
+        mutate(gas = "SF6") %>%
+        bind_rows(TEMPPFC) -> L142.pfc_R_S_T_Yh_gas4
+
+      # Calculate global emissions totals by PFC and SF6
+      L142.pfc_R_S_T_Yh_totalPFC %>%
+        group_by(supplysector, subsector, stub.technology, year, Non.CO2) %>%
+        summarise(tot_emissions = sum(tot_emissions)) %>%
+        ungroup() ->
+        L142.pfc_R_S_T_Yh_totalPFC2
+
+      # Calculates global share of emissions in each year and sector to CF4 and C2F6
+      L142.pfc_R_S_T_Yh_gas4 %>%
+        left_join(L142.pfc_R_S_T_Yh_totalPFC2, by = c("supplysector", "subsector",
+                                                                    "stub.technology", "gas" = "Non.CO2", "year")) %>%
+        mutate(emiss_share = emissions / tot_emissions) %>%
+        select(-emissions, -tot_emissions) ->
+        L142.pfc_R_S_T_Yh_share
+
+      # Calculate replacement values for EPA sectors with multiple PFC gases with no corresponding EDGAR emissions
+      L142.EPA_EDGAR_PFCmatch %>%
+        left_join(L142.pfc_R_S_T_Yh_share, by = c("supplysector", "subsector", "stub.technology", "Non.CO2", "gas", "year")) %>%
+        filter(is.infinite(emscalar)) %>%
+        mutate(adj_emissions = EPA_emissions * emiss_share) -> L142.EPA_EDGAR_PFCmatch_inf
+
+      # Rebind replaced infinite values to the original df
       L142.EPA_EDGAR_PFCmatch %>%
         filter(!is.infinite(emscalar)) %>%
         bind_rows(L142.EPA_EDGAR_PFCmatch_inf) -> L142.EPA_EDGAR_PFCmatch_adj
