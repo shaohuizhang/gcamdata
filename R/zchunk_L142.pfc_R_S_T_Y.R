@@ -175,8 +175,6 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       rename(value = emissions) ->
       L142.pfc_R_S_T_Yh
 
-    browser()
-
     # =========================================================
     # NEW DATA FLOW - SCALE EDGAR EMISSIONS TO MATCH EPA TOTALS
     # =========================================================
@@ -375,7 +373,8 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
       L142.EPA_EDGAR_PFCmatch %>%
         left_join(L142.pfc_R_S_T_Yh_share, by = c("supplysector", "subsector", "stub.technology", "Non.CO2", "gas", "year")) %>%
         filter(is.infinite(emscalar)) %>%
-        mutate(adj_emissions = EPA_emissions * emiss_share) -> L142.EPA_EDGAR_PFCmatch_inf
+        mutate(adj_emissions = EPA_emissions * emiss_share) %>%
+        select(-emiss_share) -> L142.EPA_EDGAR_PFCmatch_inf
 
       # Rebind replaced infinite values to the original df
       L142.EPA_EDGAR_PFCmatch %>%
@@ -397,6 +396,7 @@ module_emissions_L142.pfc_R_S_T_Y <- function(command, ...) {
 
       # Replace original output with scaled values
       L142.pfc_R_S_T_Yh <- L142.EPA_PFC_R_S_T_Yh
+
     }
     else {}
 
